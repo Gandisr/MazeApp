@@ -1,12 +1,15 @@
 package com.example.ilsar.mazeapp;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -136,22 +139,26 @@ public class MazeNode extends View {
         if (this.up.isRemoved()){
             MazeNode near =  up.getNear(this);
             if (near != null)
-                UF.union(this.ufWrapper, near.getUF());
+                if (near.isPassed())
+                    UF.union(this.ufWrapper, near.getUF());
         }
         if (this.down.isRemoved()){
             MazeNode near =  down.getNear(this);
             if (near != null)
-                UF.union(this.ufWrapper, near.getUF());
+                if (near.isPassed())
+                    UF.union(this.ufWrapper, near.getUF());
         }
         if (this.left.isRemoved()){
             MazeNode near =  left.getNear(this);
             if (near != null)
-                UF.union(this.ufWrapper, near.getUF());
+                if (near.isPassed())
+                    UF.union(this.ufWrapper, near.getUF());
         }
         if (this.right.isRemoved()){
             MazeNode near =  right.getNear(this);
             if (near != null)
-                UF.union(this.ufWrapper, near.getUF());
+                if (near.isPassed())
+                    UF.union(this.ufWrapper, near.getUF());
         }
     }
 
@@ -160,7 +167,7 @@ public class MazeNode extends View {
 
     }
 
-    private void winDialog(){
+    public void winDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder((Activity) this.getContext());
         builder.setMessage("YOU ARE THE WINNER")
                 .setTitle("YOU WINS");
@@ -169,9 +176,7 @@ public class MazeNode extends View {
                 // User clicked OK button
             }
         });
-        AlertDialog dialog = builder.create();
-
-
+        builder.create().show();
     }
 
     public MazeWall getUpWall() {
