@@ -71,8 +71,6 @@ public class RunningFragment extends Fragment {
                     params.leftMargin = mes;
                     params.topMargin = mes;
                 } else {
-                    if (i == 0)
-                        params.topMargin = mes;
                     if (j == 0) {
                         params.leftMargin = mes;
                         params.addRule(RelativeLayout.BELOW, topNode.getId());
@@ -83,8 +81,10 @@ public class RunningFragment extends Fragment {
                         leftNode = node;
                     }
                 }
+                node.setLayoutParams(params);
                 node.setBackgroundColor(Color.WHITE);
-                myLayout.addView(node, params);
+                myLayout.addView(node);
+                node.invalidate();
             }
         }
 

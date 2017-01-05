@@ -14,10 +14,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void generateMaze(View view){
-        int size = 4;
-       // Intent generateIntent = new Intent(this, MazeActivity.class)
-         //       .putExtra(Intent.EXTRA_TEXT, Integer.toString(size));
-        //startActivity(generateIntent);
+        int size = 5;
+
         Intent generateIntent = new Intent(this, RunningActivity.class)
                .putExtra(Intent.EXTRA_TEXT, Integer.toString(size));
         startActivity(generateIntent);

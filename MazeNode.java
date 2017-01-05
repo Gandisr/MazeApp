@@ -1,11 +1,13 @@
 package com.example.ilsar.mazeapp;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -21,12 +23,18 @@ public class MazeNode extends View {
     private int nodeId;
     private UF ufWrapper;
     private boolean passed = false;
-
+    private Context context;
+    private Paint paint;
 
     public MazeNode (int id, Context context){
         super(context);
+        this.context = context;
         this.nodeId = id;
         ufWrapper = new UF(this);
+
+        this.paint = new Paint();
+        this.paint.setColor(Color.BLACK);
+        paint.setStrokeWidth(5);
     }
 
     public UF getUF(){
@@ -58,42 +66,60 @@ public class MazeNode extends View {
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
 
-        int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
-        int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
-        int mes = (Math.min(parentHeight, parentWidth))/(Maze.size+2);
-        this.setMeasuredDimension(mes,mes);
-        this.setLayoutParams(new RelativeLayout.LayoutParams(mes ,mes));
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
+        int width = widthSize/6;
+        int height = heightSize/6;
+
+        int mes = Math.min(width, height);
+
+        setMeasuredDimension(mes, mes);
+        setMeasuredDimension(164, 164);
     }
 
     @Override
     public void onDraw(Canvas canvas){
-        Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
+        super.onDraw(canvas);
+
 
         //get the XY values
-        int width = this.getWidth();
+        float width =(float) this.getWidth();
         float x = this.getX();
         float y = this.getY();
         Log.e("LOGGER", "x = " + x);
         Log.e("LOGGER", "y = " + y);
 
-        //print top
+        Log.e("LOGGER", "can x = " + canvas.getClipBounds().centerX());
+        if(this.isPassed())
+            this.setBackgroundColor(Color.RED);
+        else
+            this.setBackgroundColor(Color.WHITE);
+
         if (this.up != null)
-            canvas.drawLine(x, y, x+width, y, paint);
+            canvas.drawLine(0, 0, canvas.getWidth(), 0, paint);
         //print right
         if (this.right != null)
-            canvas.drawLine(x+width, y, x+width, y+width, paint);
+            canvas.drawLine(canvas.getWidth() ,0 , canvas.getWidth(), canvas.getWidth(), paint);
         //print bot
         if (this.down != null)
-            canvas.drawLine(x, y+width, x+width, y+width, paint);
+            canvas.drawLine(0,canvas.getWidth(),canvas.getWidth(), canvas.getWidth(), paint);
         //print left
         if (this.left != null)
-            canvas.drawLine(x, y, x, y+width, paint);
+            canvas.drawLine(0, 0, 0 ,canvas.getWidth(), paint);
+
+
     }
 
-    public void resetUF(){ this.ufWrapper = new UF(this); }
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        this.setPassed(true);
+        this.invalidate();
+        return true;
+    }
+
+
+        public void resetUF(){ this.ufWrapper = new UF(this); }
 
     public MazeWall getUpWall() {
         return up;
