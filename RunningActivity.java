@@ -54,6 +54,7 @@ public class RunningActivity extends AppCompatActivity {
                         if (j == 0) {
                             params.leftMargin = mes;
                             params.addRule(RelativeLayout.BELOW,  maze.getTheMaze()[i-1][j].getId());
+                            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
 
                         } else {
                             params.addRule(RelativeLayout.RIGHT_OF,  maze.getTheMaze()[i][j-1].getId());

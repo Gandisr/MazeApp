@@ -83,7 +83,7 @@ public class MazeNode extends View {
         int mes = Math.min(width, height);
 
         setMeasuredDimension(mes, mes);
-        setMeasuredDimension(164, 164);
+        setMeasuredDimension(80, 80);
     }
 
     @Override
