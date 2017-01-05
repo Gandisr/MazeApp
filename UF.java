@@ -25,6 +25,8 @@ public class UF {
 
 
     public static void link(UF x, UF y){
+        if (x == y)
+            return;
         if (x.getRank() > y.getRank())
             y.setFather(x);
         else{

@@ -24,10 +24,7 @@ public class RunningActivity extends AppCompatActivity {
 
         int mes = Math.min(ww, hh); //mesure of the node
 
-        // add the nodes
-        MazeNode leftNode = null;
-        MazeNode topNode = null;
-        MazeNode firstInRow = null;
+
         MazeNode node = null;
         int nodeId = 1;
 
@@ -42,9 +39,7 @@ public class RunningActivity extends AppCompatActivity {
                 nodeId++;
 
                 if (i == 0 && j == 0) {
-                    topNode = node;
-                    leftNode = node;
-                    firstInRow = node;
+
                     params.leftMargin = mes;
                     params.topMargin = mes;
                     params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
@@ -53,34 +48,27 @@ public class RunningActivity extends AppCompatActivity {
                     if (i == 0){
                         params.topMargin = mes;
                         params.addRule(RelativeLayout.RIGHT_OF, maze.getTheMaze()[i][j-1].getId());
-                        leftNode = node;
+
                     }
                     else{
                         if (j == 0) {
                             params.leftMargin = mes;
                             params.addRule(RelativeLayout.BELOW,  maze.getTheMaze()[i-1][j].getId());
-                            topNode = node;
-                            leftNode = node;
+
                         } else {
                             params.addRule(RelativeLayout.RIGHT_OF,  maze.getTheMaze()[i][j-1].getId());
                             params.addRule(RelativeLayout.BELOW,  maze.getTheMaze()[i-1][j].getId());
-                            leftNode = node;
                         }
                     }
                 }
                 node.setLayoutParams(params);
                 myLayout.addView(node);
 
-
-                /*
-                TextView valueTV = new TextView(this);
-                valueTV.setText("The developer world is yours");
-                valueTV.setId(5);
-                valueTV.setLayoutParams(params);
-                myLayout.addView(valueTV);
-                */
+                node.resetUF();
             }
         }
+
+
 
 
 /*

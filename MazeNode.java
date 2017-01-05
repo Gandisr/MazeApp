@@ -1,10 +1,13 @@
 package com.example.ilsar.mazeapp;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,16 +28,18 @@ public class MazeNode extends View {
     private boolean passed = false;
     private Context context;
     private Paint paint;
+    private Maze maze;
 
-    public MazeNode (int id, Context context){
+    public MazeNode (int id, Maze maze, Context context){
         super(context);
         this.context = context;
         this.nodeId = id;
+        this.maze = maze;
         ufWrapper = new UF(this);
 
         this.paint = new Paint();
         this.paint.setColor(Color.BLACK);
-        paint.setStrokeWidth(5);
+        paint.setStrokeWidth(8);
     }
 
     public UF getUF(){
@@ -43,13 +48,13 @@ public class MazeNode extends View {
 
     public void removeWall(MazeWall wall){
         if (wall == this.up)
-            this.up = null;
+            this.up.setRemoved();
         else if (wall == this.down)
-            this.down = null;
+            this.down.setRemoved();
         else if (wall == this.left)
-            this.left = null;
+            this.left.setRemoved();
         else if (wall == this.right)
-            this.right = null;
+            this.right.setRemoved();
         else
             System.out.println("ERROR IN WALL REMOVAL");
         //TODO throws exepction
@@ -87,25 +92,23 @@ public class MazeNode extends View {
         float width =(float) this.getWidth();
         float x = this.getX();
         float y = this.getY();
-        Log.e("LOGGER", "x = " + x);
-        Log.e("LOGGER", "y = " + y);
 
-        Log.e("LOGGER", "can x = " + canvas.getClipBounds().centerX());
+
         if(this.isPassed())
             this.setBackgroundColor(Color.RED);
         else
             this.setBackgroundColor(Color.WHITE);
 
-        if (this.up != null)
+        if (!this.up.isRemoved())
             canvas.drawLine(0, 0, canvas.getWidth(), 0, paint);
         //print right
-        if (this.right != null)
+        if (!this.right.isRemoved())
             canvas.drawLine(canvas.getWidth() ,0 , canvas.getWidth(), canvas.getWidth(), paint);
         //print bot
-        if (this.down != null)
+        if (!this.down.isRemoved())
             canvas.drawLine(0,canvas.getWidth(),canvas.getWidth(), canvas.getWidth(), paint);
         //print left
-        if (this.left != null)
+        if (!this.left.isRemoved())
             canvas.drawLine(0, 0, 0 ,canvas.getWidth(), paint);
 
 
@@ -115,11 +118,61 @@ public class MazeNode extends View {
     public boolean onTouchEvent(MotionEvent e) {
         this.setPassed(true);
         this.invalidate();
+        unify();
+        if (checkWin()){
+            winDialog();
+            Log.e("LOGGER", "YOU WON");
+        }
+
+
         return true;
     }
 
 
-        public void resetUF(){ this.ufWrapper = new UF(this); }
+    public void resetUF(){ this.ufWrapper = new UF(this); }
+
+    private void unify(){
+        //up
+        if (this.up.isRemoved()){
+            MazeNode near =  up.getNear(this);
+            if (near != null)
+                UF.union(this.ufWrapper, near.getUF());
+        }
+        if (this.down.isRemoved()){
+            MazeNode near =  down.getNear(this);
+            if (near != null)
+                UF.union(this.ufWrapper, near.getUF());
+        }
+        if (this.left.isRemoved()){
+            MazeNode near =  left.getNear(this);
+            if (near != null)
+                UF.union(this.ufWrapper, near.getUF());
+        }
+        if (this.right.isRemoved()){
+            MazeNode near =  right.getNear(this);
+            if (near != null)
+                UF.union(this.ufWrapper, near.getUF());
+        }
+    }
+
+    private boolean checkWin(){
+        return (UF.find(maze.entryNode().getUF()).getValue().getNodeId() == UF.find(maze.exitNode().getUF()).getValue().getNodeId());
+
+    }
+
+    private void winDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder((Activity) this.getContext());
+        builder.setMessage("YOU ARE THE WINNER")
+                .setTitle("YOU WINS");
+        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+            }
+        });
+        AlertDialog dialog = builder.create();
+
+
+    }
 
     public MazeWall getUpWall() {
         return up;

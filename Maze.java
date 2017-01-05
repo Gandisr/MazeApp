@@ -19,6 +19,8 @@ public class Maze {
     private UF[][] mazeUF;
     private List<MazeWall> wallsList = new ArrayList<MazeWall>();
     private Context context;
+    private MazeNode entry;
+    private MazeNode exit;
 
 
     public Maze(int size, Context context){
@@ -41,7 +43,7 @@ public class Maze {
         int id = 1;
         for (int i = 0; i < size; i++){
             for (int j = 0; j < size; j++){
-                this.theMaze[i][j] = new MazeNode(id, context);
+                this.theMaze[i][j] = new MazeNode(id,this, context);
                 this.theMaze[i][j].generateViewId();
                 id++;
             }
@@ -134,12 +136,16 @@ public class Maze {
             int locTop = rand.nextInt(size);
             int locBot = rand.nextInt(size);
             theMaze[0][locTop].removeWall(theMaze[0][locTop].getUpWall());
+            entry = theMaze[0][locTop];
             theMaze[size-1][locBot].removeWall(theMaze[size-1][locBot].getDownWall());
+            exit = theMaze[size-1][locBot];
         } else{
             int locLeft = rand.nextInt(size);
             int locRight = rand.nextInt(size);
             theMaze[locLeft][0].removeWall(theMaze[locLeft][0].getLeftWall());
+            entry =  theMaze[locLeft][0];
             theMaze[locRight][size-1].removeWall(theMaze[locRight][size-1].getRightWall());
+            exit =  theMaze[locRight][size-1];
         }
 
     }
@@ -165,4 +171,8 @@ public class Maze {
     public List<MazeWall> getWallsList() {
         return wallsList;
     }
+
+    public MazeNode entryNode (){ return this.entry; }
+
+    public MazeNode exitNode (){ return this.exit; }
 }
